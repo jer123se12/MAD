@@ -12,15 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Chatmate"
         tools:targetApi="31">
+
+        <!-- Launcher Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".QuizStartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- MainActivity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

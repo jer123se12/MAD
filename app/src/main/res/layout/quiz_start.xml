@@ -1,0 +1,92 @@
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Main Content -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E8F0F2">
+
+        <!-- Header Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#004A74"
+            android:padding="16dp">
+
+            <!-- Menu Icon -->
+            <ImageView
+                android:id="@+id/menu_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/menu"
+                android:contentDescription="Menu Icon" />
+
+            <!-- App Name -->
+            <TextView
+                android:id="@+id/app_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ChatMate"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginStart="16dp"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <!-- Weekly Quiz Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/quiz_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Weekly quiz"
+                android:textSize="24sp"
+                android:textColor="#004A74" />
+
+            <TextView
+                android:id="@+id/questions_completed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0/15"
+                android:textSize="36sp"
+                android:layout_marginTop="8dp"
+                android:textColor="#004A74" />
+
+            <TextView
+                android:id="@+id/question_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Questions completed"
+                android:textSize="16sp"
+                android:layout_marginTop="4dp"
+                android:textColor="#7A8C99" />
+
+            <Button
+                android:id="@+id/start_button"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:text="Start"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#004A74"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="#FFFFFF" />
+</androidx.drawerlayout.widget.DrawerLayout>
