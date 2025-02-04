@@ -74,4 +74,6 @@ download folder to my directory
 
 https://tsukubawebcorpus.jp/en/
 freq list very easy to use
+http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz
+japanese dictionary for english
 
