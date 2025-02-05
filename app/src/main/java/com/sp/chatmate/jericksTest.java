@@ -42,7 +42,7 @@ public class jericksTest extends AppCompatActivity {
         findViewById(R.id.rmb).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                helper.remembered(2, true);
+                //helper.remembered(2, true);
             }
         });
         findViewById(R.id.learn).setOnClickListener(new View.OnClickListener() {

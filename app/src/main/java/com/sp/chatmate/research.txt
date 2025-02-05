@@ -60,3 +60,20 @@ system for video
 maybe search for longest words first then slowly get shorter?
 then replace with space and continue
 maybe can get all unique charaters and searching through that first instead of directly searching through plain text
+
+
+
+
+---
+
+importing dictionary
+
+download manager to download file
+create folder in my android directory to store the file
+download folder to my directory
+
+https://tsukubawebcorpus.jp/en/
+freq list very easy to use
+http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz
+japanese dictionary for english
+
