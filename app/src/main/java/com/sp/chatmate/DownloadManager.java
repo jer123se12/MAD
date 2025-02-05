@@ -19,6 +19,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.xmlbeans.impl.common.IOUtil;
+import org.w3c.dom.Document;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -29,10 +31,15 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class DownloadManager extends AppCompatActivity {
     private static String file_url="https://tsukubawebcorpus.jp/static/xlsx/NLT1.40_freq_list.xlsx";
@@ -59,7 +66,7 @@ public class DownloadManager extends AppCompatActivity {
         executor.execute(DownloadFile(dict_url,getExternalFilesDir(null).toString()+"/"+dictName,prog2));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+
     public void next(String dest){
         if (dest.equals(getExternalFilesDir(null).toString()+ "/"+fileName)){
             ExecutorService executor= Executors.newSingleThreadExecutor();
@@ -69,6 +76,10 @@ public class DownloadManager extends AppCompatActivity {
             final OutputStream out = new FileOutputStream(new File(getExternalFilesDir(null).toString()+"/"+"output.xml"));
                 final InputStream in   = new GZIPInputStream(new FileInputStream(new File(dest))) ;
                 IOUtil.copyCompletely(in,out);
+                out.close();
+                in.close();
+                ExecutorService executor= Executors.newSingleThreadExecutor();
+                executor.execute(parseXML);
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -77,10 +88,17 @@ public class DownloadManager extends AppCompatActivity {
         }
 
     }
-    Runnable downloadDict=new Runnable() {
+    Runnable parseXML=new Runnable() {
         @Override
         public void run() {
-
+            try {
+                File fXmlFile = new File(getExternalFilesDir(null).toString()+"/"+"output.xml");
+                SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+                JMDictParser handler = new JMDictParser();
+                saxParser.parse(fXmlFile,handler);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     };
     Runnable parseFile=new Runnable() {
@@ -118,6 +136,7 @@ public class DownloadManager extends AppCompatActivity {
             }
         }
     };
+
     private Runnable DownloadFile(String fileurl, String dest){
         return DownloadFile(fileurl,dest,null);
     }
@@ -129,16 +148,16 @@ public class DownloadManager extends AppCompatActivity {
             @Override
             public void run() {
 
-//                if (new File(dest).exists()){
-//                    handler.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            progress.setProgress(100);
-//                            next(dest);
-//                        }
-//                    });
-//                    return;
-//                }
+                if (new File(dest).exists()){
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.setProgress(100);
+                            next(dest);
+                        }
+                    });
+                    return;
+                }
                 int count;
                 try {
                     URL url = new URL(fileurl);
