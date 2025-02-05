@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "721069276725",
+    "project_id": "langify-a017b",
+    "storage_bucket": "langify-a017b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721069276725:android:b9a762f3e33b11299fbb7c",
+        "android_client_info": {
+          "package_name": "com.sp.chatmate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVXG58w_zwxwHz8fgzj0hCU2bNAe4ciww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
