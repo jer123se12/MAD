@@ -39,7 +39,7 @@ public class vocabHelper extends SQLiteOpenHelper {
     }
 
     public Cursor getAll(String table) {
-        return (getReadableDatabase().rawQuery("SELECT * FROM " + table, null));
+        return (getReadableDatabase().rawQuery("SELECT * FROM " + table+" ORDER BY frequency DESC LIMIT 1000", null));
     }
 
     public void create(String term, String definition, int frequency) {
