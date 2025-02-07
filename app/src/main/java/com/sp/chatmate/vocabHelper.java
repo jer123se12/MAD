@@ -38,8 +38,14 @@ public class vocabHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteALl(){
+        getWritableDatabase().execSQL("DELETE FROM allWords");
+        getWritableDatabase().execSQL("DELETE FROM seen");
+        getWritableDatabase().execSQL("DELETE FROM learning");
+        getWritableDatabase().execSQL("DELETE FROM learnt");
+    }
     public Cursor getAll(String table) {
-        return (getReadableDatabase().rawQuery("SELECT * FROM " + table+" ORDER BY frequency DESC LIMIT 1000", null));
+        return (getReadableDatabase().rawQuery("SELECT * FROM " + table+" ORDER BY `frequency`+0 DESC LIMIT 1000", null));
     }
 
     public void create(String term, String definition, int frequency) {
@@ -151,7 +157,7 @@ public class vocabHelper extends SQLiteOpenHelper {
         List<Card> result=cursorToCards(dueCards);
 
         // new cards
-        Cursor nC=getReadableDatabase().rawQuery("SELECT id from allWords where status=0 ORDER BY frequency LIMIT "+String.valueOf(newCards), null);
+        Cursor nC=getReadableDatabase().rawQuery("SELECT id from allWords where status=0 ORDER BY frequency DESC LIMIT "+String.valueOf(newCards), null);
         result.addAll(cursorToCards(nC));
         return result;
     }

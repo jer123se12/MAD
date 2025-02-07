@@ -51,7 +51,12 @@ public class jericksTest extends AppCompatActivity {
                 helper.learn(2, true);
             }
         });
-
+        findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.deleteALl();
+            }
+        });
 
 
 

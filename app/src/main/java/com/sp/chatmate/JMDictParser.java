@@ -21,6 +21,7 @@ public class JMDictParser extends DefaultHandler {
     private StringBuilder data = null;
     private boolean hasReading=false;
     private boolean hasMeaning=false;
+    private boolean hasName=false;
     private Handler handler;
     private TextView progress;
 
@@ -51,22 +52,37 @@ public class JMDictParser extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         switch(qName){
-            case"k_ele":
+            case"keb":
                 dictEntry word=new dictEntry();
                 word.setTerm(data.toString().strip());
+                if(data.toString().equals("の")){
+                    Log.i("correct", "inside");
+                }
                 words.add(word);
                 break;
             case "reb":
-                for (int i=0;i<words.size();i++){
-                    words.get(i).setReading(data.toString());
+                if(!hasReading) {
+                    if (!hasName){
+                        dictEntry wordd=new dictEntry();
+                        wordd.setTerm(data.toString().strip());
+                        if(data.toString().equals("の")){
+                            Log.i("correct", "inside");
+                        }
+                        words.add(wordd);
+                    }
+                    for (int i = 0; i < words.size(); i++) {
+                        words.get(i).setReading(data.toString());
+                    }
+                    hasReading = true;
                 }
-                hasReading=true;
                 break;
             case "gloss":
-                for (int i=0;i<words.size();i++){
-                    words.get(i).setDefinition(data.toString());
+                if(!hasMeaning){
+                    for (int i=0;i<words.size();i++){
+                        words.get(i).setDefinition(data.toString());
+                    }
+                    hasMeaning=true;
                 }
-                hasMeaning=true;
                 break;
             case "entry":
                 for (int i=0;i<words.size();i++){
@@ -98,4 +114,5 @@ public class JMDictParser extends DefaultHandler {
     public HashMap<String,dictEntry> getHashmap(){
         return wordList;
     }
+
 }

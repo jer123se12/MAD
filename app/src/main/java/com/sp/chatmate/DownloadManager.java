@@ -46,7 +46,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 public class DownloadManager extends AppCompatActivity {
     private static String file_url="https://tsukubawebcorpus.jp/static/xlsx/NLT1.40_freq_list.xlsx";
-    private static String dict_url="http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz";
+    private static String dict_url="http://ftp.edrdg.org/pub/Nihongo/JMdict_b.gz";
     private static String fileName="download.xlsx";
     private static String dictName="compressedDictionary.gz";
     Handler handler;
@@ -148,11 +148,13 @@ public class DownloadManager extends AppCompatActivity {
                     if (r.getCell(1)!=null && r.getCell(1).getStringCellValue()!="記号") {
                         if (r.getCell(0) != null && r.getCell(3)!=null) {
                             dictEntry test=hashm.get(r.getCell(0).getStringCellValue().strip());
+                            if(r.getCell(0).getStringCellValue().equals("の")){
+                                Log.i("correct", String.valueOf(hashm.get("の")==null));
+                            }
                             if (test==null){
                                 numberOfErrors++;
                             } else{
                                 helper.create(test.term,"reading: "+test.reading+"\n"+test.definition, Integer.parseInt(r.getCell(3).getStringCellValue().replace(",","")));
-
                             }
 
                         }
