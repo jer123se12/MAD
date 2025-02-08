@@ -1,5 +1,6 @@
 package com.sp.chatmate;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -12,9 +13,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.CheckedOutputStream;
+
 import android.os.Handler;
 public class JMDictParser extends DefaultHandler {
-    private HashMap<String,dictEntry> wordList= new HashMap<>();
+    private HashMap<String,Integer> freqList;
     private long counter=0;
     private List<dictEntry> words= null;
     private dictEntry entr = null;
@@ -22,6 +25,9 @@ public class JMDictParser extends DefaultHandler {
     private boolean hasReading=false;
     private boolean hasMeaning=false;
     private boolean hasName=false;
+    private vocabHelper helper;
+    private Context context;
+    private boolean firstTime=true;
     private Handler handler;
     private TextView progress;
 
@@ -44,6 +50,14 @@ public class JMDictParser extends DefaultHandler {
         });
     }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
+    public void setFreqList(HashMap<String, Integer> freqList) {
+        this.freqList = freqList;
+    }
+
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         data.append(new String(ch, start, length));
@@ -53,6 +67,7 @@ public class JMDictParser extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         switch(qName){
             case"keb":
+                hasName=true;
                 dictEntry word=new dictEntry();
                 word.setTerm(data.toString().strip());
                 if(data.toString().equals("の")){
@@ -86,10 +101,13 @@ public class JMDictParser extends DefaultHandler {
                 break;
             case "entry":
                 for (int i=0;i<words.size();i++){
-                    wordList.put(words.get(i).term,words.get(i));
+                    Integer freq=freqList.get(words.get(i).term);
+                    if(freq!=null) {
+                        helper.create(words.get(i).term, "Reading: " + words.get(i).reading + "\nMeaning: " + words.get(i).definition, freq);
+                    }
                 }
                 counter++;
-                if (counter%100==0){
+                if (counter%53==0){
                     publshProgress(counter);
                 }
                 break;
@@ -100,19 +118,21 @@ public class JMDictParser extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+        if (firstTime){
+            firstTime=false;
+            helper=new vocabHelper(progress.getContext(), "japanese");
+        }
         switch (qName){
             case "entry":
                 words=new ArrayList<>();
                 hasMeaning=false;
                 hasReading=false;
+                hasName=false;
                 break;
             default:
                 break;
         }
         data=new StringBuilder();
-    }
-    public HashMap<String,dictEntry> getHashmap(){
-        return wordList;
     }
 
 }

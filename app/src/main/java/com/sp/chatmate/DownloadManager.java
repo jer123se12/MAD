@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
@@ -51,8 +53,10 @@ public class DownloadManager extends AppCompatActivity {
     private static String dictName="compressedDictionary.gz";
     Handler handler;
     TextView status;
-    private HashMap<String,dictEntry>hashm;
+    private HashMap<String,Boolean>hashm;
+    private HashMap<String, Integer>freqH;
     ProgressBar prog;
+    vocabHelper helper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,9 @@ public class DownloadManager extends AppCompatActivity {
         ExecutorService executor= Executors.newSingleThreadExecutor();
         handler=new Handler(Looper.getMainLooper());
         status=findViewById(R.id.status);
+        helper=new vocabHelper(this,"japanese");
+        helper.deleteALl();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         executor.execute(DownloadFile(file_url,getExternalFilesDir(null).toString()+ "/"+fileName,prog));
         executor.execute(DownloadFile(dict_url,getExternalFilesDir(null).toString()+"/"+dictName,prog2));
@@ -84,7 +91,7 @@ public class DownloadManager extends AppCompatActivity {
                 out.close();
                 in.close();
                 ExecutorService executor= Executors.newSingleThreadExecutor();
-                executor.execute(parseXML);
+                executor.execute(parseFile);
 
 
             } catch (Exception e) {
@@ -108,13 +115,13 @@ public class DownloadManager extends AppCompatActivity {
                 SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
                 JMDictParser filep= new JMDictParser();
                 filep.setProgress(handler,findViewById(R.id.status));
+                filep.setContext(DownloadManager.this);
+                filep.setFreqList(freqH);
                 saxParser.parse(fXmlFile,filep);
-                hashm=filep.getHashmap();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        ExecutorService executor= Executors.newSingleThreadExecutor();
-                        executor.execute(parseFile);
+                        Toast.makeText(getApplicationContext(), "done",  Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -140,34 +147,43 @@ public class DownloadManager extends AppCompatActivity {
                 int startRow=1;
                 int numberOfErrors=0;
                 int row=0;
-                vocabHelper helper=new vocabHelper(getBaseContext(),"japanese");
+                freqH=new HashMap<>();
                 for (Row r : sheet) {
                     row++;
+                    if (row==1){
+                        continue;
+                    }
 
                     int finalRow=row;
                     if (r.getCell(1)!=null && r.getCell(1).getStringCellValue()!="記号") {
                         if (r.getCell(0) != null && r.getCell(3)!=null) {
-                            dictEntry test=hashm.get(r.getCell(0).getStringCellValue().strip());
-                            if(r.getCell(0).getStringCellValue().equals("の")){
-                                Log.i("correct", String.valueOf(hashm.get("の")==null));
-                            }
-                            if (test==null){
-                                numberOfErrors++;
-                            } else{
-                                helper.create(test.term,"reading: "+test.reading+"\n"+test.definition, Integer.parseInt(r.getCell(3).getStringCellValue().replace(",","")));
-                            }
+                            freqH.put(r.getCell(0).getStringCellValue().strip(),Integer.parseInt(r.getCell(3).getStringCellValue().replace(",","")));
+
+
 
                         }
                     }
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            status.setText(String.valueOf(finalRow)+" / "+String.valueOf(lastRow)+" words parsed");
-                        }
-                    });
+                    if(row%53==0){
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                status.setText(String.valueOf(finalRow)+" / "+String.valueOf(lastRow)+" words parsed");
+
+                            }
+                        });
+                    }
                 }
+
                 Log.i("total", "cannot find"+String.valueOf(numberOfErrors)+"/"+String.valueOf(lastRow)+" "+String.valueOf((int)(((float)numberOfErrors/(float)lastRow)*100))+"%");
                 Log.i("total", "words found "+String.valueOf(lastRow-numberOfErrors));
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        ExecutorService executor= Executors.newSingleThreadExecutor();
+                        executor.execute(parseXML);
+                    }
+                });
 
 
 

@@ -47,6 +47,14 @@ public class vocabHelper extends SQLiteOpenHelper {
     public Cursor getAll(String table) {
         return (getReadableDatabase().rawQuery("SELECT * FROM " + table+" ORDER BY `frequency`+0 DESC LIMIT 1000", null));
     }
+    public void createCardFromEntry(dictEntry entry,int freq){
+    }
+    public boolean editFrequency(String term,int freq){
+         SQLiteDatabase db=getWritableDatabase();
+         ContentValues newFreq=(new ContentValues());
+         newFreq.put("frequency", freq);
+         return db.update("allWords", newFreq, "term=?", new String[]{term})>0;
+    }
 
     public void create(String term, String definition, int frequency) {
         ContentValues cv = new ContentValues();
@@ -89,8 +97,9 @@ public class vocabHelper extends SQLiteOpenHelper {
     }
 
     public Card getCard(int id){
-        Cursor Card = getReadableDatabase().rawQuery("SELECT term, definition from allWords where id=" + String.valueOf(id), null);
-        return new Card(db, Card.getColumnName(0), Card.getColumnName(1), id);
+        Cursor Card = getReadableDatabase().rawQuery("SELECT term, definition from allWords where _id=" + String.valueOf(id), null);
+        Card.moveToFirst();
+        return new Card(db, Card.getString(0), Card.getString(1), id);
     }
 
 
@@ -153,11 +162,11 @@ public class vocabHelper extends SQLiteOpenHelper {
     // get todays cards
     public List<Card> getCardsToday(int revisionCards, int newCards) {
         // revision
-        Cursor dueCards = getReadableDatabase().rawQuery("SELECT id from learning where next_review<" + String.valueOf(System.currentTimeMillis() / 1000L) + "LIMIT " + String.valueOf(revisionCards), null);
+        Cursor dueCards = getReadableDatabase().rawQuery("SELECT id from learning where (`next_review`+0)<" + String.valueOf(System.currentTimeMillis() / 1000L) + " LIMIT " + String.valueOf(revisionCards), null);
         List<Card> result=cursorToCards(dueCards);
 
         // new cards
-        Cursor nC=getReadableDatabase().rawQuery("SELECT id from allWords where status=0 ORDER BY frequency DESC LIMIT "+String.valueOf(newCards), null);
+        Cursor nC=getReadableDatabase().rawQuery("SELECT _id from allWords where status=0 ORDER BY `frequency`+0 DESC LIMIT "+String.valueOf(newCards), null);
         result.addAll(cursorToCards(nC));
         return result;
     }
@@ -165,9 +174,12 @@ public class vocabHelper extends SQLiteOpenHelper {
     private List<Card> cursorToCards(Cursor cards){
         List<Card> result=new ArrayList<Card>();
         int num=cards.getCount();
+        Log.i("length", String.valueOf(cards.getCount()));
+        cards.moveToFirst();
         for (int i=0;i<num;i++){
-            cards.move(i);
+            Log.i("index", String.valueOf(i));
             result.add(getCard(cards.getInt(0)));
+            cards.move(1);
         }
         return result;
     }
