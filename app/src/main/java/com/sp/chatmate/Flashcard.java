@@ -27,6 +27,10 @@ public class Flashcard extends AppCompatActivity {
     TextView backDef;
     FrameLayout front;
     FrameLayout back;
+    Button flip;
+    Button hard;
+    Button easy;
+    int currentCard=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +41,9 @@ public class Flashcard extends AppCompatActivity {
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
          front=findViewById(R.id.front);
          back=findViewById(R.id.back);
-        Button flip=findViewById(R.id.flip_btn);
+        flip=findViewById(R.id.flip_btn);
+        hard=findViewById(R.id.flip_btn);
+        flip=findViewById(R.id.flip_btn);
         frontTerm=findViewById(R.id.front_term);
         backTerm=findViewById(R.id.back_term);
         backDef=findViewById(R.id.back_definition);
@@ -52,14 +58,22 @@ public class Flashcard extends AppCompatActivity {
             public void onClick(View v) {
                 if (!frontanim.isRunning()&& !backanim.isRunning()){
                     if(isFront){
+                        back();
                         goToBack();
                     }else{
+                        front();
                         goToFront();
 
                     }
                 }
             }
         });
+    }
+    void front(){
+
+    }
+    void back(){
+
     }
     void goToBack(){
         if (isFront) {
@@ -80,6 +94,7 @@ public class Flashcard extends AppCompatActivity {
         }
     }
     void loadCard(int i){
+        currentCard=i;
         goToFront();
        Card card=cards.get(i);
        Log.i("term", card.term);
