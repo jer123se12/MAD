@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bvl"
+    android:visibility="visible"
     tools:context=".Flashcard">
 
     <!--Add a textview for back part of the card-->
@@ -24,6 +25,7 @@
         android:textColorHint="@color/bl"
         android:textColorLink="@color/bl"
         android:textSize="24sp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -31,23 +33,25 @@
         tools:ignore="MissingConstraints" />
 
     <LinearLayout
+        android:id="@+id/backLL"
         android:layout_width="350dp"
         android:layout_height="60dp"
         android:orientation="horizontal"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/flip_btn"
         app:layout_constraintEnd_toEndOf="@+id/flip_btn"
         app:layout_constraintStart_toStartOf="@+id/flip_btn"
         app:layout_constraintTop_toTopOf="@+id/flip_btn">
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/hard_btn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Hard" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/easy_btn"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -143,7 +147,7 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/counter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"

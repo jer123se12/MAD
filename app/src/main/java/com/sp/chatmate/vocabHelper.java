@@ -45,7 +45,7 @@ public class vocabHelper extends SQLiteOpenHelper {
         getWritableDatabase().execSQL("DELETE FROM learnt");
     }
     public Cursor getAll(String table) {
-        return (getReadableDatabase().rawQuery("SELECT * FROM " + table+" ORDER BY `frequency`+0 DESC LIMIT 1000", null));
+        return (getReadableDatabase().rawQuery("SELECT * FROM " + table+" LIMIT 1000", null));
     }
     public void createCardFromEntry(dictEntry entry,int freq){
     }
@@ -105,11 +105,22 @@ public class vocabHelper extends SQLiteOpenHelper {
 
     // called after the flashcards
     public void learn(int id, boolean remembered) {
-        Cursor Card = getReadableDatabase().rawQuery("SELECT status from allWords where id=" + String.valueOf(id), null);
+        Cursor Card = getReadableDatabase().rawQuery("SELECT status from allWords where _id=" + String.valueOf(id), null);
         Card.moveToFirst();
         switch (Card.getInt(0)) {
+            case 0:{
+                Log.i("here","help");
+                updateStatus(id,2);
+                int rbox=(remembered)?1:0;
+                ContentValues cv = new ContentValues();
+                cv.put("id", id);
+                cv.put("next_review", getNextDate(rbox));
+                cv.put("box", rbox);
+                getWritableDatabase().insert("learning", null, cv);
+                break;}
             case 1:
                 if (remembered) {
+                    Log.i("learn", "added to learning");
                     // move to learning
                     int box = 3;
                     updateStatus(id, 2);

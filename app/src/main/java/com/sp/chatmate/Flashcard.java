@@ -24,12 +24,14 @@ public class Flashcard extends AppCompatActivity {
     vocabHelper helper;
     TextView frontTerm;
     TextView backTerm;
+    TextView counter;
     TextView backDef;
     FrameLayout front;
     FrameLayout back;
     Button flip;
     Button hard;
     Button easy;
+    LinearLayout backLL;
     int currentCard=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +44,13 @@ public class Flashcard extends AppCompatActivity {
          front=findViewById(R.id.front);
          back=findViewById(R.id.back);
         flip=findViewById(R.id.flip_btn);
-        hard=findViewById(R.id.flip_btn);
-        flip=findViewById(R.id.flip_btn);
+        hard=findViewById(R.id.hard_btn);
+        easy=findViewById(R.id.easy_btn);
+        backLL=findViewById(R.id.backLL);
         frontTerm=findViewById(R.id.front_term);
         backTerm=findViewById(R.id.back_term);
         backDef=findViewById(R.id.back_definition);
+        counter=findViewById(R.id.counter);
 
         front.setCameraDistance(8000*scale);
         back.setCameraDistance(8000*scale);
@@ -68,11 +72,33 @@ public class Flashcard extends AppCompatActivity {
                 }
             }
         });
+        hard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.learn(cards.get(currentCard).id,false);
+                if (currentCard<cards.size()-1) {
+                    loadCard(currentCard + 1);
+                }
+            }
+        });
+        easy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.learn(cards.get(currentCard).id,true);
+                if (currentCard<cards.size()-1) {
+                    loadCard(currentCard + 1);
+                }
+            }
+        });
     }
     void front(){
+        flip.setVisibility(View.VISIBLE);
+        backLL.setVisibility(View.INVISIBLE);
 
     }
     void back(){
+        backLL.setVisibility(View.VISIBLE);
+        flip.setVisibility(View.INVISIBLE);
 
     }
     void goToBack(){
@@ -96,10 +122,14 @@ public class Flashcard extends AppCompatActivity {
     void loadCard(int i){
         currentCard=i;
         goToFront();
+        frontanim.end();
+        backanim.end();
+        front();
        Card card=cards.get(i);
        Log.i("term", card.term);
        frontTerm.setText(card.term);
        backTerm.setText(card.term);
        backDef.setText(card.definition);
+       counter.setText(String.valueOf(currentCard+1)+"/"+String.valueOf(cards.size()));
     }
 }
