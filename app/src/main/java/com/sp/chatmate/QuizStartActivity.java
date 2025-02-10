@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Picasso;
+//import com.squareup.picasso.Picasso;
 
 public class QuizStartActivity extends AppCompatActivity {
 
@@ -81,7 +81,7 @@ public class QuizStartActivity extends AppCompatActivity {
                     tvUsername.setText(username);
 
                     if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                        Picasso.get().load(profileImageUrl).into(profileImage);
+//                        Picasso.get().load(profileImageUrl).into(profileImage);
                     } else {
                         profileImage.setImageResource(R.drawable.default_profile_background);
                     }

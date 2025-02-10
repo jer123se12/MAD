@@ -79,14 +79,14 @@
         android:textSize="18sp"/>
 
     <!-- Speech Recognition for "Read the Word Out" -->
-    <ImageView
-        android:id="@+id/mic_button"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/ic_mic"
-        android:contentDescription="Mic Button"
-        android:visibility="gone"
-        android:layout_marginTop="20dp"/>
+<!--    <ImageView-->
+<!--        android:id="@+id/mic_button"-->
+<!--        android:layout_width="60dp"-->
+<!--        android:layout_height="60dp"-->
+<!--        android:src="@drawable/ic_mic"-->
+<!--        android:contentDescription="Mic Button"-->
+<!--        android:visibility="gone"-->
+<!--        android:layout_marginTop="20dp"/>-->
 
     <!-- Next Button -->
     <Button
