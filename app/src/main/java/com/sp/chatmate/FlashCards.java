@@ -1,11 +1,19 @@
 package com.sp.chatmate;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -14,82 +22,135 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.List;
 //import com.squareup.picasso.Picasso;
 
 public class FlashCards extends AppCompatActivity {
-
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference databaseReference;
+    private Animator frontanim;
+    private Animator backanim;
+    boolean isFront=true;
+    List<Card> cards;
+    vocabHelper helper;
+    TextView frontTerm;
+    TextView backTerm;
+    TextView counter;
+    TextView backDef;
+    FrameLayout front;
+    FrameLayout back;
+    Button flip;
+    Button hard;
+    Button easy;
+    LinearLayout backLL;
+    int currentCard=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.flashcards);
+        // initialise nav button and drawer
+        new navDrawerInit(
+                FlashCards.this,
+                findViewById(R.id.nav_view),
+                FirebaseAuth.getInstance(),
+                FirebaseDatabase.getInstance().getReference("users"),
+                findViewById(R.id.drawer_layout),
+                findViewById(R.id.menu_icon)
+        ).init();
 
-        // Initialize Firebase
-        firebaseAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        helper=new vocabHelper(this, "japanese");
+        cards=helper.getCardsToday(5,5);
+        float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        front=findViewById(R.id.front);
+        back=findViewById(R.id.back);
+        flip=findViewById(R.id.flip_btn);
+        hard=findViewById(R.id.hard_btn);
+        easy=findViewById(R.id.easy_btn);
+        backLL=findViewById(R.id.backLL);
+        frontTerm=findViewById(R.id.front_term);
+        backTerm=findViewById(R.id.back_term);
+        backDef=findViewById(R.id.back_definition);
+        counter=findViewById(R.id.counter);
 
-        // Initialize Views
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-
-        // Open Navigation Drawer when Menu Icon is Clicked
-        findViewById(R.id.menu_icon).setOnClickListener(new View.OnClickListener() {
+        front.setCameraDistance(8000*scale);
+        back.setCameraDistance(8000*scale);
+        frontanim= AnimatorInflater.loadAnimator(this,R.animator.front_animator);
+        backanim= AnimatorInflater.loadAnimator(this,R.animator.back_animator);
+        loadCard(0);
+        flip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawerLayout.openDrawer(navigationView);
-            }
-        });
+                if (!frontanim.isRunning()&& !backanim.isRunning()){
+                    if(isFront){
+                        back();
+                        goToBack();
+                    }else{
+                        front();
+                        goToFront();
 
-        // Handle Navigation Item Clicks
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-
-                if (id == R.id.nav_flashcards) {
-                    // Stay on the same screen
-                } else if (id == R.id.nav_quiz) {
-                    startActivity(new Intent(FlashCards.this, QuizStartActivity.class));
-                } else if (id == R.id.nav_immersion) {
-                    startActivity(new Intent(FlashCards.this, ImmersionActivity.class));
-                }
-
-                drawerLayout.closeDrawers(); // Close drawer after selection
-                return true;
-            }
-        });
-
-        // Load user profile details in the navigation header
-        loadUserProfile();
-    }
-
-    // Load Profile Image & Username from Firebase
-    private void loadUserProfile() {
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
-            String userId = user.getUid();
-            databaseReference.child(userId).get().addOnSuccessListener(dataSnapshot -> {
-                if (dataSnapshot.exists()) {
-                    String username = dataSnapshot.child("username").getValue(String.class);
-                    String profileImageUrl = dataSnapshot.child("profileImageUrl").getValue(String.class);
-
-                    // Get header view from NavigationView
-                    View headerView = navigationView.getHeaderView(0);
-                    ImageView profileImage = headerView.findViewById(R.id.profile_image);
-                    TextView tvUsername = headerView.findViewById(R.id.tv_username);
-
-                    tvUsername.setText(username);
-                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-//                        Picasso.get().load(profileImageUrl).into(profileImage);
-                    } else {
-                        profileImage.setImageResource(R.drawable.default_profile_background); // Use local default image
                     }
                 }
-            });
+            }
+        });
+        hard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.learn(cards.get(currentCard).id,false);
+                if (currentCard<cards.size()-1) {
+                    loadCard(currentCard + 1);
+                }
+            }
+        });
+        easy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.learn(cards.get(currentCard).id,true);
+                if (currentCard<cards.size()-1) {
+                    loadCard(currentCard + 1);
+                }
+            }
+        });
+    }
+    void front(){
+        flip.setVisibility(View.VISIBLE);
+        backLL.setVisibility(View.INVISIBLE);
+
+    }
+    void back(){
+        backLL.setVisibility(View.VISIBLE);
+        flip.setVisibility(View.INVISIBLE);
+
+    }
+    void goToBack(){
+        if (isFront) {
+            frontanim.setTarget(front);
+            backanim.setTarget(back);
+            frontanim.start();
+            backanim.start();
+            isFront = false;
         }
     }
+    void goToFront(){
+        if (!isFront) {
+            frontanim.setTarget(back);
+            backanim.setTarget(front);
+            frontanim.start();
+            backanim.start();
+            isFront = true;
+        }
+    }
+    void loadCard(int i){
+        currentCard=i;
+        goToFront();
+        frontanim.end();
+        backanim.end();
+        front();
+        Card card=cards.get(i);
+        Log.i("term", card.term);
+        frontTerm.setText(card.term);
+        backTerm.setText(card.term);
+        backDef.setText(card.definition);
+        counter.setText(String.valueOf(currentCard+1)+"/"+String.valueOf(cards.size()));
+    }
+
 }

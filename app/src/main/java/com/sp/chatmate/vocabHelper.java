@@ -27,10 +27,11 @@ public class vocabHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE allWords (" + "_id INTEGER PRIMARY KEY AUTOINCREMENT," + " term TEXT," + " definition TEXT," + " frequency INTEGER," + " status INTEGER);");
+        db.execSQL("CREATE TABLE allWords (" + "_id INTEGER PRIMARY KEY AUTOINCREMENT," + " term TEXT," + " definition TEXT," + " frequency INTEGER," + " status INTEGER, "+"folder TEXT);");
         db.execSQL("CREATE TABLE seen (" + "id INTEGER," + " times_seen TEXT);");
         db.execSQL("CREATE TABLE learning (" + "id INTEGER," + " next_review INTEGER," + " box INTEGER);");
         db.execSQL("CREATE TABLE learnt (" + "id INTEGER," + " last_reviewed INTEGER);");
+        db.execSQL("CREATE TABLE folders(" + "folder TEXT);" );
     }
 
     @Override
@@ -43,17 +44,51 @@ public class vocabHelper extends SQLiteOpenHelper {
         getWritableDatabase().execSQL("DELETE FROM seen");
         getWritableDatabase().execSQL("DELETE FROM learning");
         getWritableDatabase().execSQL("DELETE FROM learnt");
+        getWritableDatabase().execSQL("DELETE FROM folders");
     }
     public Cursor getAll(String table) {
         return (getReadableDatabase().rawQuery("SELECT * FROM " + table+" LIMIT 1000", null));
     }
-    public void createCardFromEntry(dictEntry entry,int freq){
+    public List<Card> getCards(String table){
+
+        Cursor cards= getReadableDatabase().rawQuery("SELECT id from "+table+" LIMIT 1000;", null);
+        return cursorToCards(cards);
     }
-    public boolean editFrequency(String term,int freq){
-         SQLiteDatabase db=getWritableDatabase();
-         ContentValues newFreq=(new ContentValues());
-         newFreq.put("frequency", freq);
-         return db.update("allWords", newFreq, "term=?", new String[]{term})>0;
+    public List<Card> getAllCards(){
+
+        Cursor cards= getReadableDatabase().rawQuery("SELECT _id from allWords LIMIT 1000;", null);
+        return cursorToCards(cards);
+    }
+
+
+    public void newFolder(String folder){
+        getWritableDatabase().execSQL("INSERT INTO folders VALUES('"+folder+"')");
+    }
+    public void addToFolder(int id, String folder){
+        if (!getFolders().contains(folder)){
+            newFolder(folder);
+        }
+        getWritableDatabase().execSQL("UPDATE allWords SET folder='"+folder+"' WHERE _id="+String.valueOf(id));
+    }
+    public List<String> getFolders(){
+        Cursor folders=getReadableDatabase().rawQuery("SELECT * FROM folders", null);
+        List<String> result=new ArrayList<String>();
+        folders.moveToFirst();
+        for (int i=0;i<folders.getCount();i++){
+            result.add(folders.getString(0));
+            folders.move(1);
+        }
+        return  result;
+    }
+    public List<Card> getCardsFolder(String folder){
+        Cursor cardsInFolder=getReadableDatabase().rawQuery("SELECT * FROM allWords WHERE folder='"+folder+"'", null);
+        List<Card> result=new ArrayList<>();
+        cardsInFolder.moveToFirst();
+        for (int i=0;i<cardsInFolder.getCount();i++){
+            result.add(new Card(db, cardsInFolder.getString(1), cardsInFolder.getString(2), cardsInFolder.getInt(0)));
+            cardsInFolder.move(1);
+        }
+        return  result;
     }
 
     public void create(String term, String definition, int frequency) {
@@ -62,6 +97,7 @@ public class vocabHelper extends SQLiteOpenHelper {
         cv.put("definition", definition);
         cv.put("frequency", frequency);
         cv.put("status", 0);
+        cv.put("folder", "");
         getWritableDatabase().insert("allWords", "term", cv);
     }
 
@@ -181,6 +217,18 @@ public class vocabHelper extends SQLiteOpenHelper {
         result.addAll(cursorToCards(nC));
         return result;
     }
+    public List<Card> getCardsFolder(int revisionCards, int newCards,String folder){
+        Cursor dueCards = getReadableDatabase().rawQuery("SELECT id from learning LEFT JOIN allWords ON learning.id=allWords._id where folder like '%"+
+                folder+
+                "%' AND (`next_review`+0)<" + String.valueOf(System.currentTimeMillis() / 1000L) +
+                " LIMIT " + String.valueOf(revisionCards), null);
+        List<Card> result=cursorToCards(dueCards);
+
+        // new cards
+        Cursor nC=getReadableDatabase().rawQuery("SELECT _id from allWords where status=0 and folder like '%"+folder+"%' ORDER BY `frequency`+0 DESC LIMIT "+String.valueOf(newCards), null);
+        result.addAll(cursorToCards(nC));
+        return result;
+    };
 
     private List<Card> cursorToCards(Cursor cards){
         List<Card> result=new ArrayList<Card>();

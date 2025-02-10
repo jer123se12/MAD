@@ -18,7 +18,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Flashcard"
+            android:name=".cards"
             android:exported="true" />
         <activity
             android:name=".DownloadManager"
@@ -40,22 +40,22 @@
             android:exported="true" />
         <activity
             android:name=".LanguageSelection"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".UploadFile"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".onboarding"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".FlashCards"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".ImmersionActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".QuizStartActivity"
-            android:exported="true"/>
+            android:exported="true" />
     </application>
 
 </manifest>
