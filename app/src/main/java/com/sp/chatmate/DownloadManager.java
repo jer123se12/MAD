@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.RequiresApi;
@@ -19,6 +22,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.xmlbeans.impl.common.IOUtil;
+import org.w3c.dom.Document;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -26,21 +31,32 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class DownloadManager extends AppCompatActivity {
     private static String file_url="https://tsukubawebcorpus.jp/static/xlsx/NLT1.40_freq_list.xlsx";
-    private static String dict_url="http://ftp.edrdg.org/pub/Nihongo/JMdict_e.gz";
+    private static String dict_url="http://ftp.edrdg.org/pub/Nihongo/JMdict_b.gz";
     private static String fileName="download.xlsx";
     private static String dictName="compressedDictionary.gz";
     Handler handler;
+    TextView status;
+    private HashMap<String,Boolean>hashm;
+    private HashMap<String, Integer>freqH;
     ProgressBar prog;
+    vocabHelper helper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,21 +70,29 @@ public class DownloadManager extends AppCompatActivity {
         prog.setMax(100);
         ExecutorService executor= Executors.newSingleThreadExecutor();
         handler=new Handler(Looper.getMainLooper());
+        status=findViewById(R.id.status);
+        helper=new vocabHelper(this,"japanese");
+        helper.deleteALl();
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         executor.execute(DownloadFile(file_url,getExternalFilesDir(null).toString()+ "/"+fileName,prog));
         executor.execute(DownloadFile(dict_url,getExternalFilesDir(null).toString()+"/"+dictName,prog2));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+
     public void next(String dest){
         if (dest.equals(getExternalFilesDir(null).toString()+ "/"+fileName)){
-            ExecutorService executor= Executors.newSingleThreadExecutor();
-            executor.execute(parseFile);
+
         }else{
             try{
             final OutputStream out = new FileOutputStream(new File(getExternalFilesDir(null).toString()+"/"+"output.xml"));
                 final InputStream in   = new GZIPInputStream(new FileInputStream(new File(dest))) ;
                 IOUtil.copyCompletely(in,out);
+                out.close();
+                in.close();
+                ExecutorService executor= Executors.newSingleThreadExecutor();
+                executor.execute(parseFile);
+
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -77,10 +101,33 @@ public class DownloadManager extends AppCompatActivity {
         }
 
     }
-    Runnable downloadDict=new Runnable() {
+    Runnable finalthing=new Runnable() {
         @Override
         public void run() {
 
+        }
+    };
+    Runnable parseXML=new Runnable() {
+        @Override
+        public void run() {
+            try {
+                File fXmlFile = new File(getExternalFilesDir(null).toString()+"/"+"output.xml");
+                SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
+                JMDictParser filep= new JMDictParser();
+                filep.setProgress(handler,findViewById(R.id.status));
+                filep.setContext(DownloadManager.this);
+                filep.setFreqList(freqH);
+                saxParser.parse(fXmlFile,filep);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "done",  Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     };
     Runnable parseFile=new Runnable() {
@@ -98,15 +145,45 @@ public class DownloadManager extends AppCompatActivity {
                 Sheet sheet = workbook.getSheetAt(1);
                 int lastRow=sheet.getLastRowNum();
                 int startRow=1;
+                int numberOfErrors=0;
+                int row=0;
+                freqH=new HashMap<>();
                 for (Row r : sheet) {
+                    row++;
+                    if (row==1){
+                        continue;
+                    }
 
+                    int finalRow=row;
                     if (r.getCell(1)!=null && r.getCell(1).getStringCellValue()!="記号") {
                         if (r.getCell(0) != null && r.getCell(3)!=null) {
-                            Log.i("word", r.getCell(0).getStringCellValue() + " freq: " + r.getCell(3).getStringCellValue());
+                            freqH.put(r.getCell(0).getStringCellValue().strip(),Integer.parseInt(r.getCell(3).getStringCellValue().replace(",","")));
+
+
 
                         }
                     }
+                    if(row%53==0){
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                status.setText(String.valueOf(finalRow)+" / "+String.valueOf(lastRow)+" words parsed");
+
+                            }
+                        });
+                    }
                 }
+
+                Log.i("total", "cannot find"+String.valueOf(numberOfErrors)+"/"+String.valueOf(lastRow)+" "+String.valueOf((int)(((float)numberOfErrors/(float)lastRow)*100))+"%");
+                Log.i("total", "words found "+String.valueOf(lastRow-numberOfErrors));
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        ExecutorService executor= Executors.newSingleThreadExecutor();
+                        executor.execute(parseXML);
+                    }
+                });
 
 
 
@@ -118,6 +195,7 @@ public class DownloadManager extends AppCompatActivity {
             }
         }
     };
+
     private Runnable DownloadFile(String fileurl, String dest){
         return DownloadFile(fileurl,dest,null);
     }
@@ -129,16 +207,16 @@ public class DownloadManager extends AppCompatActivity {
             @Override
             public void run() {
 
-//                if (new File(dest).exists()){
-//                    handler.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            progress.setProgress(100);
-//                            next(dest);
-//                        }
-//                    });
-//                    return;
-//                }
+                if (new File(dest).exists()){
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress.setProgress(100);
+                            next(dest);
+                        }
+                    });
+                    return;
+                }
                 int count;
                 try {
                     URL url = new URL(fileurl);
