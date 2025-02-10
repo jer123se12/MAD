@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D0E6E6"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <!-- Title -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="What do you want people to know about you"
+            android:textSize="16sp"
+            android:textColor="#2C4F4F"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"/>
+
+        <!-- Profile Picture Section -->
+        <RelativeLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:layout_marginBottom="20dp">
+
+            <ImageView
+                android:id="@+id/profile_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/circle_background" />
+<!--            android:src="@drawable/default_profile"-->
+
+
+            <ImageView
+                android:id="@+id/upload_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/profile_upload" />
+        </RelativeLayout>
+
+        <!-- Username -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Username"
+            android:textSize="14sp"
+            android:textColor="#2C4F4F"/>
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/text_background"
+            android:padding="10dp"
+            android:textColorHint="#A0A0A0"
+            android:hint="Enter your username"
+            android:textSize="14sp"
+            android:inputType="text"/>
+
+        <!-- Email -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email"
+            android:textSize="14sp"
+            android:textColor="#2C4F4F"/>
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/text_background"
+            android:padding="10dp"
+            android:textColorHint="#A0A0A0"
+            android:hint="Enter your email"
+            android:textSize="14sp"
+            android:inputType="textEmailAddress"/>
+
+        <!-- Password -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textSize="14sp"
+            android:textColor="#2C4F4F"/>
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/text_background"
+            android:padding="10dp"
+            android:textColorHint="#A0A0A0"
+            android:hint="Enter your password"
+            android:textSize="14sp"
+            android:inputType="textPassword"/>
+
+        <!-- About You -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="About You"
+            android:textSize="14sp"
+            android:textColor="#2C4F4F"/>
+        <EditText
+            android:id="@+id/about"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/text_background"
+            android:padding="10dp"
+            android:textColorHint="#A0A0A0"
+            android:hint="Tell something about yourself"
+            android:textSize="14sp"
+            android:gravity="top"
+            android:inputType="textMultiLine"/>
+
+        <!-- Hobbies -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hobbies"
+            android:textSize="14sp"
+            android:textColor="#2C4F4F"/>
+        <EditText
+            android:id="@+id/hobbies"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/text_background"
+            android:padding="10dp"
+            android:textColorHint="#A0A0A0"
+            android:hint="Enter your hobbies"
+            android:textSize="14sp"
+            android:inputType="text"/>
+
+        <!-- Next Button -->
+        <Button
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Next"
+            android:backgroundTint="#6FA7A7"
+            android:textColor="#FFFFFF"
+            android:enabled="false"
+            android:layout_marginTop="20dp"/>
+    </LinearLayout>
+</ScrollView>

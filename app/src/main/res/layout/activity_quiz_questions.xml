@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="20dp"
+    android:background="#D0E6E6">
+
+    <!-- Question Type Title -->
+    <TextView
+        android:id="@+id/question_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quiz"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#004A74"
+        android:gravity="center"
+        android:layout_marginBottom="10dp" />
+
+    <!-- AI-Generated Question -->
+    <TextView
+        android:id="@+id/quiz_question"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#004A74"
+        android:text="Question will appear here"
+        android:gravity="center"
+        android:layout_marginBottom="20dp" />
+
+    <!-- Layout for Multiple-Choice Answers -->
+    <LinearLayout
+        android:id="@+id/choices_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/option1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Option 1"
+            android:backgroundTint="#004A74"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/option2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Option 2"
+            android:backgroundTint="#004A74"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/option3"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Option 3"
+            android:backgroundTint="#004A74"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
+
+    <!-- Input for Fill in the Blanks -->
+    <EditText
+        android:id="@+id/fill_in_the_blank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter your answer"
+        android:background="@drawable/text_background"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:textSize="18sp"/>
+
+    <!-- Speech Recognition for "Read the Word Out" -->
+    <ImageView
+        android:id="@+id/mic_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_mic"
+        android:contentDescription="Mic Button"
+        android:visibility="gone"
+        android:layout_marginTop="20dp"/>
+
+    <!-- Next Button -->
+    <Button
+        android:id="@+id/next_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Next Question"
+        android:backgroundTint="#004A74"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="20dp"/>
+</LinearLayout>

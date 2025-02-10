@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#AED1D5">
+
+    <!-- Top Wave -->
+    <ImageView
+        android:id="@+id/topWave"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/top_wave2" />
+
+    <!-- Title on the Wave -->
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="What Language do you want to learn"
+        android:textColor="#447A80"
+        android:textSize="18sp" />
+
+    <!-- Grid Layout for Language RadioButtons -->
+    <GridLayout
+        android:id="@+id/grid_layout_languages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/topWave"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:columnCount="2"
+        android:padding="16dp"
+        android:rowCount="4">
+
+        <!-- Individual RadioButtons -->
+        <RadioButton
+            android:id="@+id/radio_chinese"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="Chinese"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+
+        <RadioButton
+            android:id="@+id/radio_english"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="English"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+
+        <RadioButton
+            android:id="@+id/radio_spanish"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="Spanish"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+
+        <RadioButton
+            android:id="@+id/radio_thai"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="Thai"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+
+        <RadioButton
+            android:id="@+id/radio_japanese"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="Japanese"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+
+        <RadioButton
+            android:id="@+id/radio_korean"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="Korean"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+
+        <RadioButton
+            android:id="@+id/radio_french"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="French"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+
+        <RadioButton
+            android:id="@+id/radio_german"
+            android:layout_width="120dp"
+            android:layout_height="50dp"
+            android:layout_margin="8dp"
+            android:backgroundTint="#DCE9EA"
+            android:text="German"
+            android:background="@drawable/radio_background"
+            android:textColor="#447A80" />
+    </GridLayout>
+
+    <!-- Next Button -->
+    <Button
+        android:id="@+id/btn_next"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:backgroundTint="#447A80"
+        android:text="Next"
+        android:textColor="#AED1D5" />
+</RelativeLayout>
