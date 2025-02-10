@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Chatmate</string>
+    <string name="app_name">ChatMate</string>
+    <string name="what_language">What Language Can You Speak</string>
+    <string name="type_language_hint">Type here in your native Language</string>
+    <string name="next_button">Next</string>
+    <string name="selected_language_toast">Language changed to %1$s</string>
 </resources>
