@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Logging in...");
         progressDialog.setCancelable(false);
+        findViewById(R.id.signUp).setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ProfileActivity.class)));
 
         // Check if user is already logged in
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
