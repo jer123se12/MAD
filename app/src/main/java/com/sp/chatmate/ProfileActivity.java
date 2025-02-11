@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -16,6 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +40,19 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
     private FirebaseStorage firebaseStorage;
+    String username;
+    String email;
+    String password;
+    String about ;
+    String hobbies ;
+
+
+
+
+
+
+
+
 
     // File Picker for Profile Picture
     private final ActivityResultLauncher<Intent> imagePickerLauncher =
@@ -77,7 +93,19 @@ public class ProfileActivity extends AppCompatActivity {
         // Open file picker when profile image or upload icon is clicked
         profileImage.setOnClickListener(v -> openImagePicker());
         uploadIcon.setOnClickListener(v -> openImagePicker());
-
+        firebaseAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                Log.i("changed","changed");
+                if(firebaseAuth.getCurrentUser()!=null){
+                    Log.i("changed","went in");
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    if (user != null) {
+                        saveProfileToFirebase(user.getUid(), username, email, about, hobbies);
+                    }
+                }
+            }
+        });
         // Enable "Next" button only when all fields are filled
         etUsername.addTextChangedListener(new TextWatcherAdapter());
         etEmail.addTextChangedListener(new TextWatcherAdapter());
@@ -122,11 +150,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     // Create a Firebase Authentication Account
     private void createFirebaseAccount() {
-        String username = etUsername.getText().toString().trim();
-        String email = etEmail.getText().toString().trim();
-        String password = etPassword.getText().toString().trim();
-        String about = etAbout.getText().toString().trim();
-        String hobbies = etHobbies.getText().toString().trim();
+        username = etUsername.getText().toString().trim();
+        email = etEmail.getText().toString().trim();
+        password = etPassword.getText().toString().trim();
+        about = etAbout.getText().toString().trim();
+        hobbies = etHobbies.getText().toString().trim();
 
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || about.isEmpty() || hobbies.isEmpty()) {
             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
@@ -135,18 +163,8 @@ public class ProfileActivity extends AppCompatActivity {
 
         progressDialog.show();
 
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = firebaseAuth.getCurrentUser();
-                        if (user != null) {
-                            saveProfileToFirebase(user.getUid(), username, email, about, hobbies);
-                        }
-                    } else {
-                        progressDialog.dismiss();
-                        Toast.makeText(ProfileActivity.this, "Account creation failed", Toast.LENGTH_LONG).show();
-                    }
-                });
+        firebaseAuth.createUserWithEmailAndPassword(email, password);
+
     }
 
     // Save profile data to Firebase (Uses drawable image if no upload)
@@ -175,17 +193,23 @@ public class ProfileActivity extends AppCompatActivity {
         userProfile.put("about", about);
         userProfile.put("hobbies", hobbies);
         userProfile.put("profileImageUrl", imageUrl); // Store either uploaded image or Firebase-hosted default
-
         databaseReference.child(userId).setValue(userProfile)
-                .addOnSuccessListener(aVoid -> {
-                    progressDialog.dismiss();
-                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(ProfileActivity.this, "Error saving profile", Toast.LENGTH_SHORT).show();
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                          @Override
+                                          public void onSuccess(Void unused) {
+                                              progressDialog.dismiss();
+                                              startActivity(new Intent(ProfileActivity.this, DownloadManager.class));
+                                              finish();
+
+                                          }
+                                      }
+                ).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("ProfileActivity", "Error saving user data", e);
+                    }
                 });
+
     }
 
 }
