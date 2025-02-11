@@ -55,11 +55,17 @@ public class FlashCards extends AppCompatActivity {
                 FirebaseAuth.getInstance(),
                 FirebaseDatabase.getInstance().getReference("users"),
                 findViewById(R.id.drawer_layout),
-                findViewById(R.id.menu_icon)
+                findViewById(R.id.menu_icon),
+                menuItems.TODAYSFlASHCARD
         ).init();
 
         helper=new vocabHelper(this, "japanese");
-        cards=helper.getCardsToday(5,5);
+        Bundle bundle=getIntent().getExtras();
+        if (getIntent().hasExtra("folder")) {
+            cards=helper.getCardsInFolder(bundle.getString("folder"));
+        }else{
+            cards = helper.getCardsToday(5, 5);
+        }
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
         front=findViewById(R.id.front);
         back=findViewById(R.id.back);

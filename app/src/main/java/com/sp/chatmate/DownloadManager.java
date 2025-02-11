@@ -1,5 +1,6 @@
 package com.sp.chatmate;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -122,6 +123,7 @@ public class DownloadManager extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), "done",  Toast.LENGTH_LONG).show();
+                        startActivity(new Intent(DownloadManager.this, MainActivity.class));
                     }
                 });
 
@@ -163,7 +165,7 @@ public class DownloadManager extends AppCompatActivity {
 
                         }
                     }
-                    if(row%53==0){
+                    if(row%133==0){
                         handler.post(new Runnable() {
                             @Override
                             public void run() {

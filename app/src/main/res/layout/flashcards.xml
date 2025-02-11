@@ -20,7 +20,10 @@
             android:layout_height="wrap_content"
             android:background="#004A74"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <!-- Menu Icon -->
             <ImageView

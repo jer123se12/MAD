@@ -1,9 +1,11 @@
 package com.sp.chatmate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,9 +42,26 @@ public class cardsAdapater extends RecyclerView.Adapter<cardsAdapater.ViewHolder
         }else{
             holder.arrow.setImageResource(R.drawable.notcollapsed);
         }
-        termAdapater nestedAdapater=new termAdapater(context,model.getCL());
+        termAdapater nestedAdapater=new termAdapater(context,model.getCL(),model.getName());
         holder.nestedRv.setAdapter(nestedAdapater);
         holder.nestedRv.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
+        holder.run.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(context, FlashCards.class);
+                intent.putExtra("folder", model.getName());
+                context.startActivity(intent);
+            }
+        });
+        holder.edit.setOnClickListener(new View.OnClickListener() {
+                                           @Override
+                                           public void onClick(View v) {
+                                               Intent intent=new Intent(context, createFolder.class);
+                                               intent.putExtra("folder", model.getName());
+                                               context.startActivity(intent);
+                                           }
+                                       }
+        );
         holder.collapse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,12 +76,17 @@ public class cardsAdapater extends RecyclerView.Adapter<cardsAdapater.ViewHolder
         TextView name;
         ImageView arrow;
         RecyclerView nestedRv;
+        Button run;
+        Button edit;
         public ViewHolder(final View itemView){
             super(itemView);
             collapse=itemView.findViewById(R.id.collapse);
             nestedRv=itemView.findViewById(R.id.inner_rv);
             name=itemView.findViewById(R.id.folder_tv);
             arrow=itemView.findViewById(R.id.arrow);
+            edit=itemView.findViewById(R.id.edit_btn);
+            run=itemView.findViewById(R.id.run_btn);
+
         }
     }
 

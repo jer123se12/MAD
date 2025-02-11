@@ -89,6 +89,15 @@ public class jericksTest extends AppCompatActivity {
                 Log.i("mine",  cursorToString(helper.getAll("learnt")));
             }
         });
+        findViewById(R.id.folderAdd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                helper.addToFolder( 1,"newFolder");
+                helper.addToFolder( 2,"newFolder");
+                helper.addToFolder( 3,"newFolder");
+                Log.i("mine",  cursorToString(helper.getAll("learnt")));
+            }
+        });
     }
     public String cursorToString(Cursor cursor){
         String cursorString = "";

@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class vocabHelper extends SQLiteOpenHelper {
@@ -68,7 +69,17 @@ public class vocabHelper extends SQLiteOpenHelper {
         if (!getFolders().contains(folder)){
             newFolder(folder);
         }
-        getWritableDatabase().execSQL("UPDATE allWords SET folder='"+folder+"' WHERE _id="+String.valueOf(id));
+        Cursor cursor=getReadableDatabase().rawQuery("SELECT folder from allWords where _id="+String.valueOf(id), null);
+        cursor.moveToFirst();
+        String folders=cursor.getString(0);
+        List<String> newFolder= new ArrayList<>();
+        if (folders.length()>0) {
+            newFolder = Arrays.asList(folders.split(","));
+        }
+        newFolder.add(folder);
+
+        Log.i("value","UPDATE allWords SET folder='"+String.join(",",newFolder)+"' WHERE _id="+String.valueOf(id));
+        getWritableDatabase().execSQL("UPDATE allWords SET folder='"+String.join(",",newFolder)+"' WHERE _id="+String.valueOf(id));
     }
     public List<String> getFolders(){
         Cursor folders=getReadableDatabase().rawQuery("SELECT * FROM folders", null);
@@ -80,8 +91,8 @@ public class vocabHelper extends SQLiteOpenHelper {
         }
         return  result;
     }
-    public List<Card> getCardsFolder(String folder){
-        Cursor cardsInFolder=getReadableDatabase().rawQuery("SELECT * FROM allWords WHERE folder='"+folder+"'", null);
+    public List<Card> getCardsInFolder(String folder){
+        Cursor cardsInFolder=getReadableDatabase().rawQuery("SELECT * FROM allWords WHERE (',' || folder || ',') LIKE '%,"+folder+",%'", null);
         List<Card> result=new ArrayList<>();
         cardsInFolder.moveToFirst();
         for (int i=0;i<cardsInFolder.getCount();i++){
@@ -89,6 +100,12 @@ public class vocabHelper extends SQLiteOpenHelper {
             cardsInFolder.move(1);
         }
         return  result;
+    }
+    public void deleteFolder(String folder){
+        List<Card> cards=getCardsInFolder(folder);
+        for(int i=0;i<cards.size();i++){
+            removeFromFolder(cards.get(i).id,folder);
+        }
     }
 
     public void create(String term, String definition, int frequency) {
@@ -132,10 +149,16 @@ public class vocabHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<Card> search(String term) {
+        Cursor cards=getReadableDatabase().rawQuery("SELECT * from allWords where term like '%"+term+"%' limit 100", null);
+        return cursorToCards(cards);
+    }
     public Card getCard(int id){
-        Cursor Card = getReadableDatabase().rawQuery("SELECT term, definition from allWords where _id=" + String.valueOf(id), null);
-        Card.moveToFirst();
-        return new Card(db, Card.getString(0), Card.getString(1), id);
+        Cursor card = getReadableDatabase().rawQuery("SELECT term, definition from allWords where _id=" + String.valueOf(id), null);
+        card.moveToFirst();
+        Card c=new Card(db, card.getString(0), card.getString(1), id);
+        card.close();
+        return c;
     }
 
 
@@ -218,14 +241,12 @@ public class vocabHelper extends SQLiteOpenHelper {
         return result;
     }
     public List<Card> getCardsFolder(int revisionCards, int newCards,String folder){
-        Cursor dueCards = getReadableDatabase().rawQuery("SELECT id from learning LEFT JOIN allWords ON learning.id=allWords._id where folder like '%"+
-                folder+
-                "%' AND (`next_review`+0)<" + String.valueOf(System.currentTimeMillis() / 1000L) +
+        Cursor dueCards = getReadableDatabase().rawQuery("SELECT id from learning LEFT JOIN allWords ON learning.id=allWords._id where (',' || folder || ',') LIKE '%,"+folder+",%' AND (`next_review`+0)<" + String.valueOf(System.currentTimeMillis() / 1000L) +
                 " LIMIT " + String.valueOf(revisionCards), null);
         List<Card> result=cursorToCards(dueCards);
 
         // new cards
-        Cursor nC=getReadableDatabase().rawQuery("SELECT _id from allWords where status=0 and folder like '%"+folder+"%' ORDER BY `frequency`+0 DESC LIMIT "+String.valueOf(newCards), null);
+        Cursor nC=getReadableDatabase().rawQuery("SELECT _id from allWords where status=0 and (',' || folder || ',') LIKE '%,"+folder+",%' ORDER BY `frequency`+0 DESC LIMIT "+String.valueOf(newCards), null);
         result.addAll(cursorToCards(nC));
         return result;
     };
@@ -293,4 +314,16 @@ public class vocabHelper extends SQLiteOpenHelper {
         return cursorString;
     }
 
+    public void removeFromFolder(int id,String folder) {
+        Cursor cursor=getReadableDatabase().rawQuery("SELECT folder from allWords where _id="+String.valueOf(id), null);
+        cursor.moveToFirst();
+        String[] folders=cursor.getString(0).split(",");
+        List<String> newFolders=new ArrayList<>();
+        for (int i=0;i<folders.length;i++) {
+            if (!folders[i].equals(folder)){
+                newFolders.add(folders[i]);
+            }
+        }
+        getWritableDatabase().execSQL("UPDATE allWords SET folder='"+String.join(",",newFolders)+"' where _id="+String.valueOf(id));
+    }
 }

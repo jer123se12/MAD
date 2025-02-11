@@ -16,6 +16,12 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+enum menuItems{
+    FLASHCARDS,
+    QUIZ,
+    IMMERSION,
+    TODAYSFlASHCARD
+}
 
 public class navDrawerInit {
     DrawerLayout DL;
@@ -24,13 +30,15 @@ public class navDrawerInit {
     DatabaseReference DR;
     Context context;
     ImageView menuBtn;
-    public navDrawerInit(Context context, NavigationView nv,FirebaseAuth fa,DatabaseReference dr, DrawerLayout dl, ImageView menuBtn){
+    menuItems currentPage;
+    public navDrawerInit(Context context, NavigationView nv,FirebaseAuth fa,DatabaseReference dr, DrawerLayout dl, ImageView menuBtn, menuItems currentPage){
         this.DL=dl;
         this.NV=nv;
         this.context=context;
         this.menuBtn=menuBtn;
         this.FA=fa;
         this.DR=dr;
+        this.currentPage=currentPage;
     }
     public void init(){
         this.menuBtn.setOnClickListener(new View.OnClickListener() {
@@ -46,11 +54,24 @@ public class navDrawerInit {
                 int id = item.getItemId();
 
                 if (id == R.id.nav_flashcards) {
+
+                    if (!currentPage.equals(menuItems.TODAYSFlASHCARD)) {
+                        context.startActivity(new Intent(context, FlashCards.class));
+                    }
                     // Stay on the same screen
                 } else if (id == R.id.nav_quiz) {
-                    context.startActivity(new Intent(context, QuizStartActivity.class));
+                    if (!currentPage.equals(menuItems.QUIZ)) {
+                        context.startActivity(new Intent(context, QuizStartActivity.class));
+                    }
                 } else if (id == R.id.nav_immersion) {
-                    context.startActivity(new Intent(context, ImmersionActivity.class));
+                    if (!currentPage.equals(menuItems.IMMERSION)) {
+                        context.startActivity(new Intent(context, ImmersionActivity.class));
+                    }
+                } else if (id==R.id.nav_folders) {
+                    if (!currentPage.equals(menuItems.FLASHCARDS)) {
+                        context.startActivity(new Intent(context, cards.class));
+                    }
+                    
                 }
 
                 DL.closeDrawers(); // Close drawer after selection
