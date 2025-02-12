@@ -12,8 +12,51 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+class percentageHelper{
+    HashMap<String, Integer> words=new HashMap<>();
+    HashMap<Integer, Integer>idtostatus=new HashMap<>();
+    public percentageHelper(HashMap<String, Integer> words,HashMap<Integer, Integer>idtostatus){
+        this.words=words;
+        this.idtostatus=idtostatus;
 
+    }
+    public Video getPercentage(Video video){
+        String captions=video.captions;
+        int LongestWord=5;
+        List<Integer> seen=new ArrayList<>();
+        List<Integer> numbers=new ArrayList<>();
+        for (int i=0;i<4;i++){
+            numbers.add(0);
+
+        }
+        for (int start=0;start<captions.length()-LongestWord;start++){
+            for (int end=LongestWord;end>0;end--){
+                if (words.containsKey(captions.substring(start,start+end))){
+                    int id=words.get(captions.substring(start,start+end));
+                    numbers.set(idtostatus.get(id),numbers.get(idtostatus.get(id))+1);
+                    if (idtostatus.get(id)==0){
+                        seen.add(id);
+                    }
+                }
+            }
+        }
+        int total=0;
+        for (int i=0;i<4;i++){
+            Log.i("total", numbers.get(i).toString());
+            total+=numbers.get(i);
+        }
+        float percentage=(float)(((float)numbers.get(1)*0.1)+(float) numbers.get(2)+(float)numbers.get(3))/(float)total;
+        video.percentage=percentage;
+        video.willSee=seen;
+        return video;
+
+
+    }
+
+
+}
 public class vocabHelper extends SQLiteOpenHelper {
     private String db;
     private static final int levels = 5;
@@ -30,6 +73,24 @@ public class vocabHelper extends SQLiteOpenHelper {
             context.startActivity(new Intent(context, DownloadManager.class));
         }
         db=name;
+    }
+
+
+    public percentageHelper getPercentage() {
+        int learning=0;
+        HashMap<String, Integer> words=new HashMap<>();
+        HashMap<Integer, Integer>idtostatus=new HashMap<>();
+        Cursor allWords=getReadableDatabase().rawQuery("SELECT * FROM allWords ORDER BY length(term)", null);
+        allWords.moveToFirst();
+        for (int i=0;i<allWords.getCount();i++){
+            words.put(allWords.getString(1),allWords.getInt(0));
+            idtostatus.put(allWords.getInt(0), allWords.getInt(4));
+            allWords.move(1);
+        }
+        return  new percentageHelper(words,idtostatus);
+
+
+
     }
 
 
@@ -135,7 +196,7 @@ public class vocabHelper extends SQLiteOpenHelper {
         Log.i("mine", cursorToString(results));
         Log.i("mine", String.valueOf(results.getColumnIndex("_id")));
         if (!results.moveToFirst() || results.getInt(1) > 1) {
-            Log.e("mine", "no such word or already started learning");
+            return;
         }
         ;
         int id = results.getInt(0);
@@ -155,6 +216,35 @@ public class vocabHelper extends SQLiteOpenHelper {
             updateStatus(id, 1);
         }
     }
+    public void seen(int id) {
+        SQLiteDatabase db = getReadableDatabase();
+        // get id
+        String query = "SELECT _id, status from allWords WHERE _id='" + String.valueOf(id) + "'";
+        Cursor results = db.rawQuery(query, null);
+
+        Log.i("mine", cursorToString(results));
+        Log.i("mine", String.valueOf(results.getColumnIndex("_id")));
+        if (!results.moveToFirst() || results.getInt(1) > 1) {
+            return;
+        }
+        ;
+        results.close();
+        // check if id exists
+        boolean isInside = (db.rawQuery("SELECT id from seen where id=" + String.valueOf(id), null).moveToFirst());
+        if (isInside) {
+            // just update
+            getWritableDatabase().execSQL("UPDATE seen SET times_seen=times_seen+1 where id=" + String.valueOf(id));
+        } else {
+            // create new
+            ContentValues cv = new ContentValues();
+            cv.put("id", id);
+            cv.put("times_seen", 1);
+            getWritableDatabase().insert("seen", null, cv);
+            // update status in word list
+            updateStatus(id, 1);
+        }
+    }
+
 
     public List<Card> search(String term) {
         Cursor cards=getReadableDatabase().rawQuery("SELECT * from allWords where term like '%"+term+"%' limit 100", null);
