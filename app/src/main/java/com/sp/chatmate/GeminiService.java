@@ -2,14 +2,16 @@ package com.sp.chatmate;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query; // Add this import for query parameters
 
 public interface GeminiService {
-//    @Headers({
-//            "Content-Type: application/json",
-//            "Authorization: Bearer AIzaSyBhcTkQZthFwefEyn9IdCmwMCFsFFeVugY"
-//    })
-//    @POST("https://generativelanguage.googleapis.com/v1beta2/models/gemini-pro:generateText")
-//    Call<GeminiResponse> generateQuiz(@Body GeminiRequest request);
+
+
+    @POST("v1beta/models/gemini-pro:generateContent")
+    Call<GeminiResponse> generateQuiz(
+            @Query("key") String apiKey,  // Include API key in query parameter
+            @Body GeminiRequest request);  // Request body
 }
