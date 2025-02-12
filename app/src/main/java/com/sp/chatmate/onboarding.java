@@ -27,5 +27,13 @@ public class onboarding extends AppCompatActivity {
                 finish();
             }
         });
+        findViewById(R.id.SignIn).setOnClickListener(new View.OnClickListener() {
+                @Override
+            public void onClick(View v) {
+                // Navigate to LanguageSelection activity
+                Intent intent = new Intent(onboarding.this, MainActivity.class);
+                startActivity(intent);
+                }
+        });
     }
 }

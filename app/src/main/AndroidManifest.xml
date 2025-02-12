@@ -38,6 +38,9 @@
             android:name=".LanguageLearn"
             android:exported="true" />
         <activity
+            android:name=".StartScratch"
+            android:exported="false" />
+        <activity
             android:name=".folderDetails"
             android:exported="false" />
         <activity

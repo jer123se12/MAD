@@ -81,9 +81,9 @@ public class ProfileActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
         databaseReference = FirebaseDatabase.getInstance("https://langify-a017b-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users");
-
         // Initialize UI Elements
         profileImage = findViewById(R.id.profile_image);
+        image=profileImage.getDrawingCache();
         uploadIcon = findViewById(R.id.upload_icon);
         etUsername = findViewById(R.id.username);
         etEmail = findViewById(R.id.email);
@@ -102,19 +102,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Open file picker when profile image or upload icon is clicked
         profileImage.setOnClickListener(v -> openImagePicker());
         uploadIcon.setOnClickListener(v -> openImagePicker());
-        firebaseAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                Log.i("changed","changed");
-                if(firebaseAuth.getCurrentUser()!=null){
-                    Log.i("changed","went in");
-                    FirebaseUser user = firebaseAuth.getCurrentUser();
-                    if (user != null) {
-                        saveProfileToFirebase(user.getUid(), username, email, about, hobbies);
-                    }
-                }
-            }
-        });
+
         // Enable "Next" button only when all fields are filled
         etUsername.addTextChangedListener(new TextWatcherAdapter());
         etEmail.addTextChangedListener(new TextWatcherAdapter());
@@ -183,8 +171,8 @@ public class ProfileActivity extends AppCompatActivity {
         about = etAbout.getText().toString().trim();
         hobbies = etHobbies.getText().toString().trim();
 
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || about.isEmpty() || hobbies.isEmpty()) {
-            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || about.isEmpty() || hobbies.isEmpty()||image==null) {
+            Toast.makeText(this, "Please fill in all fields and take a photo", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -196,6 +184,13 @@ public class ProfileActivity extends AppCompatActivity {
                 if(firebaseAuth.getCurrentUser()==null){
                     progressDialog.dismiss();
                     Toast.makeText(ProfileActivity.this, "email exists please sign in instead",Toast.LENGTH_LONG).show();
+                }else{
+
+                    Log.i("changed","went in");
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    if (user != null) {
+                        saveProfileToFirebase(user.getUid(), username, email, about, hobbies);
+                    }
                 }
             }
         });
@@ -235,7 +230,6 @@ public class ProfileActivity extends AppCompatActivity {
                                               progressDialog.dismiss();
                                               startActivity(new Intent(ProfileActivity.this, FlashCards.class));
                                               finish();
-
                                           }
                                       }
                 ).addOnFailureListener(new OnFailureListener() {
