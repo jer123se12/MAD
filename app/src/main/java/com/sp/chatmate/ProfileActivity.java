@@ -17,8 +17,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -71,7 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+        databaseReference = FirebaseDatabase.getInstance("https://langify-a017b-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users");
 
         // Initialize UI Elements
         profileImage = findViewById(R.id.profile_image);
@@ -193,6 +195,7 @@ public class ProfileActivity extends AppCompatActivity {
         userProfile.put("about", about);
         userProfile.put("hobbies", hobbies);
         userProfile.put("profileImageUrl", imageUrl); // Store either uploaded image or Firebase-hosted default
+        Log.i("db","adding to database");
         databaseReference.child(userId).setValue(userProfile)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                           @Override
@@ -207,6 +210,11 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e("ProfileActivity", "Error saving user data", e);
+                    }
+                }).addOnCanceledListener(new OnCanceledListener() {
+                    @Override
+                    public void onCanceled() {
+                        Log.e("Canceled","niggg");
                     }
                 });
 
