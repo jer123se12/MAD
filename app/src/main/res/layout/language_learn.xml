@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,7 +12,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/top_wave2" />
 
-    <!-- Title on the Wave -->
+    <!-- Title -->
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
@@ -25,7 +24,7 @@
         android:textColor="#447A80"
         android:textSize="18sp" />
 
-    <!-- Grid Layout for Language RadioButtons -->
+    <!-- Grid Layout for Buttons -->
     <GridLayout
         android:id="@+id/grid_layout_languages"
         android:layout_width="wrap_content"
@@ -43,80 +42,88 @@
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="Chinese"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radio_english"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="English"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radio_spanish"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="Spanish"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radio_thai"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="Thai"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radio_japanese"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="Japanese"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radio_korean"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="Korean"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radio_french"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="French"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
 
         <RadioButton
             android:id="@+id/radio_german"
             android:layout_width="120dp"
             android:layout_height="50dp"
             android:layout_margin="8dp"
-            android:backgroundTint="#DCE9EA"
             android:text="German"
+            android:textColor="#447A80"
             android:background="@drawable/radio_background"
-            android:textColor="#447A80" />
+            android:buttonTint="@android:color/transparent"
+            android:gravity="center" />
     </GridLayout>
 
     <!-- Next Button -->
@@ -129,5 +136,6 @@
         android:layout_marginBottom="30dp"
         android:backgroundTint="#447A80"
         android:text="Next"
-        android:textColor="#AED1D5" />
+        android:textColor="#AED1D5"
+        android:enabled="false" />
 </RelativeLayout>
