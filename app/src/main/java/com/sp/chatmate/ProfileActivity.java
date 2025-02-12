@@ -2,8 +2,11 @@ package com.sp.chatmate;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,10 +20,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.Firebase;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -28,6 +32,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageView profileImage, uploadIcon;
     private EditText etUsername, etEmail, etPassword, etAbout, etHobbies;
     private Button btnNext;
+    private Bitmap image;
     private Uri selectedImageUri;
     private ProgressDialog progressDialog;
 
@@ -119,11 +126,22 @@ public class ProfileActivity extends AppCompatActivity {
         btnNext.setOnClickListener(v -> createFirebaseAccount());
     }
 
+    int pid=123;
     // Opens the Image Picker
     private void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        imagePickerLauncher.launch(intent);
+        Intent camera_intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(camera_intent,pid);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==pid){
+            Bitmap photo=(Bitmap) data.getExtras().get("data");
+            Log.i("iamge","working");
+            profileImage.setImageBitmap(photo);
+            image=photo;
+        }
     }
 
     // Enable "Next" button only when all fields are filled
@@ -136,7 +154,14 @@ public class ProfileActivity extends AppCompatActivity {
 
         btnNext.setEnabled(isFilled);
     }
-
+    private String bitmaptostring(Bitmap img){
+        Bitmap bm = BitmapFactory.decodeFile("/path/to/image.jpg");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.JPEG, 100, baos); // bm is the bitmap object
+        byte[] b = baos.toByteArray();
+        String encodec= android.util.Base64.encodeToString(b, android.util.Base64.DEFAULT);
+        return encodec;
+    }
     class TextWatcherAdapter implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -165,7 +190,15 @@ public class ProfileActivity extends AppCompatActivity {
 
         progressDialog.show();
 
-        firebaseAuth.createUserWithEmailAndPassword(email, password);
+        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(firebaseAuth.getCurrentUser()==null){
+                    progressDialog.dismiss();
+                    Toast.makeText(ProfileActivity.this, "email exists please sign in instead",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
     }
 
@@ -194,14 +227,13 @@ public class ProfileActivity extends AppCompatActivity {
         userProfile.put("email", email);
         userProfile.put("about", about);
         userProfile.put("hobbies", hobbies);
-        userProfile.put("profileImageUrl", imageUrl); // Store either uploaded image or Firebase-hosted default
-        Log.i("db","adding to database");
+        userProfile.put("profileImageUrl", bitmaptostring(image)); // Store either uploaded image or Firebase-hosted default
         databaseReference.child(userId).setValue(userProfile)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                           @Override
                                           public void onSuccess(Void unused) {
                                               progressDialog.dismiss();
-                                              startActivity(new Intent(ProfileActivity.this, DownloadManager.class));
+                                              startActivity(new Intent(ProfileActivity.this, FlashCards.class));
                                               finish();
 
                                           }
@@ -210,11 +242,6 @@ public class ProfileActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e("ProfileActivity", "Error saving user data", e);
-                    }
-                }).addOnCanceledListener(new OnCanceledListener() {
-                    @Override
-                    public void onCanceled() {
-                        Log.e("Canceled","niggg");
                     }
                 });
 

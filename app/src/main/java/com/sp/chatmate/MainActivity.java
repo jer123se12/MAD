@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                         navigateToHome();
                     } else {
                         progressDialog.dismiss();
-                        Toast.makeText(MainActivity.this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Please check if username and password is correct", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

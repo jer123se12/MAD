@@ -2,6 +2,7 @@ package com.sp.chatmate;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -19,9 +20,15 @@ public class vocabHelper extends SQLiteOpenHelper {
     private static final int[] intervals = {1, 2, 3, 7, 12};
 
     private static final int SCHEMA_VERSION = 1;
+    Context context;
 
     public vocabHelper(@Nullable Context context, @Nullable String name) {
         super(context, name, null, SCHEMA_VERSION);
+        context=context;
+        if((! (context instanceof DownloadManager ))&& getReadableDatabase().rawQuery("SELECT * FROM allWords",null).getCount()==0) {
+            Log.i("herre","help");
+            context.startActivity(new Intent(context, DownloadManager.class));
+        }
         db=name;
     }
 

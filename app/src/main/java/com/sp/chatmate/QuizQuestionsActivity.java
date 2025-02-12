@@ -28,7 +28,7 @@ public class QuizQuestionsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Set initial layout (this will be updated later based on the question type)
-        setContentView(R.layout.activity_quiz_questions);
+        //setContentView(R.layout.activity_quiz_questions);
 
         // Initialize UI elements
         questionTypeText = findViewById(R.id.question_type);

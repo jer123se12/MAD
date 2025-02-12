@@ -19,5 +19,9 @@
         android:id="@+id/nav_folders"
         android:icon="@drawable/ic_flashcards"
         android:title="Flashcards" />
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@android:drawable/ic_menu_revert"
+        android:title="Logout" />
 
 </menu>

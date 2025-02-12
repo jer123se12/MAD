@@ -53,7 +53,7 @@ public class FlashCards extends AppCompatActivity {
                 FlashCards.this,
                 findViewById(R.id.nav_view),
                 FirebaseAuth.getInstance(),
-                FirebaseDatabase.getInstance().getReference("users"),
+                FirebaseDatabase.getInstance("https://langify-a017b-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users"),
                 findViewById(R.id.drawer_layout),
                 findViewById(R.id.menu_icon),
                 menuItems.TODAYSFlASHCARD
@@ -61,11 +61,7 @@ public class FlashCards extends AppCompatActivity {
 
         helper=new vocabHelper(this, "japanese");
         Bundle bundle=getIntent().getExtras();
-        if (getIntent().hasExtra("folder")) {
-            cards=helper.getCardsInFolder(bundle.getString("folder"));
-        }else{
-            cards = helper.getCardsToday(5, 5);
-        }
+
         float scale = getApplicationContext().getResources().getDisplayMetrics().density;
         front=findViewById(R.id.front);
         back=findViewById(R.id.back);
@@ -82,7 +78,6 @@ public class FlashCards extends AppCompatActivity {
         back.setCameraDistance(8000*scale);
         frontanim= AnimatorInflater.loadAnimator(this,R.animator.front_animator);
         backanim= AnimatorInflater.loadAnimator(this,R.animator.back_animator);
-        loadCard(0);
         flip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,6 +111,17 @@ public class FlashCards extends AppCompatActivity {
                 }
             }
         });
+        if (getIntent().hasExtra("folder")) {
+            cards=helper.getCardsInFolder(bundle.getString("folder"));
+            if (cards.size()>0) {
+                loadCard(0);
+            }
+        }else{
+            cards = helper.getCardsToday(5, 5);
+            if (cards.size()>0) {
+                loadCard(0);
+            }
+        }
     }
     void front(){
         flip.setVisibility(View.VISIBLE);

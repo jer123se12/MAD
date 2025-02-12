@@ -26,7 +26,7 @@ public class cards extends AppCompatActivity {
                 cards.this,
                 findViewById(R.id.nav_view),
                 FirebaseAuth.getInstance(),
-                FirebaseDatabase.getInstance().getReference("users"),
+                FirebaseDatabase.getInstance("https://langify-a017b-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users"),
                 findViewById(R.id.cardsLayout),
                 findViewById(R.id.menu_icon),
                 menuItems.FLASHCARDS

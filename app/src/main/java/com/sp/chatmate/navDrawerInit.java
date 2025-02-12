@@ -2,6 +2,10 @@ package com.sp.chatmate;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -52,27 +56,35 @@ public class navDrawerInit {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
+                Log.i("id", id + "");
 
                 if (id == R.id.nav_flashcards) {
 
                     if (!currentPage.equals(menuItems.TODAYSFlASHCARD)) {
+                        Log.i("nav", "toFlashcards");
                         context.startActivity(new Intent(context, FlashCards.class));
                     }
                     // Stay on the same screen
                 } else if (id == R.id.nav_quiz) {
                     if (!currentPage.equals(menuItems.QUIZ)) {
+                        Log.i("nav", "toQuiz");
                         context.startActivity(new Intent(context, QuizStartActivity.class));
                     }
                 } else if (id == R.id.nav_immersion) {
                     if (!currentPage.equals(menuItems.IMMERSION)) {
+                        Log.i("nav", "toImmerse");
                         context.startActivity(new Intent(context, ImmersionActivity.class));
                     }
                 } else if (id==R.id.nav_folders) {
                     if (!currentPage.equals(menuItems.FLASHCARDS)) {
+                        Log.i("nav", "toFolders");
                         context.startActivity(new Intent(context, cards.class));
                     }
-                    
+                }else if(id==R.id.nav_logout){
+                    FirebaseAuth.getInstance().signOut();
+                    context.startActivity(new Intent(context, MainActivity.class));
                 }
+
 
                 DL.closeDrawers(); // Close drawer after selection
                 return true;
@@ -92,13 +104,13 @@ public class navDrawerInit {
                     TextView tvUsername = headerView.findViewById(R.id.tv_username);
 
                     tvUsername.setText(username);
-                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-//                        Picasso.get().load(profileImageUrl).into(profileImage);
-                    } else {
-                        profileImage.setImageResource(R.drawable.default_profile_background); // Use local default image
-                    }
+                    byte[] decodedString = Base64.decode(profileImageUrl, Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    profileImage.setImageBitmap(decodedByte); // Use local default image
                 }
             });
+        }else{
+            Log.e("not found","username is null");
         }
 
     }
