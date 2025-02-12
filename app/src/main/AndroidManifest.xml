@@ -26,7 +26,16 @@
             android:name=".createFolder"
             android:exported="true" />
         <activity
-            android:name=".webView"
+            android:name=".webView"/>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ReviewWordsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".LanguageLearn"
             android:exported="true" />
         <activity
             android:name=".folderDetails"
@@ -42,7 +51,7 @@
             android:exported="true" /> <!-- Launcher Activity -->
 
         <activity
-            android:name=".MainActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,6 +71,7 @@
         <activity
             android:name=".LanguageSelection"
             android:exported="true" />
+
         <activity
             android:name=".UploadFile"
             android:exported="true" />

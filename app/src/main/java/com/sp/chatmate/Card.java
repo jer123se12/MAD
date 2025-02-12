@@ -11,4 +11,18 @@ public class Card{
         this.definition=definition;
         this.id=id;
     }
+    //updated
+    public String getTerm() {
+        return term;
+    }
+
+    // Getter for the definition updated
+    public String getDefinition() {
+        return definition;
+    }
+
+    // Getter for the ID updated
+    public int getId() {
+        return id;
+    }
 }

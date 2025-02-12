@@ -38,48 +38,53 @@
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 
-        <!-- Weekly Quiz Section -->
-        <LinearLayout
+        <!-- CardView to wrap everything -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:elevation="4dp"
+            android:radius="8dp"
+            android:layout_centerInParent="true">
 
-            <TextView
-                android:id="@+id/quiz_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Weekly Quiz"
-                android:textSize="24sp"
-                android:textColor="#004A74" />
+            <!-- Content inside CardView -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="20dp">
 
-            <TextView
-                android:id="@+id/questions_completed"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0/15"
-                android:textSize="36sp"
-                android:layout_marginTop="8dp"
-                android:textColor="#004A74" />
+                <!-- Quiz Title -->
+                <TextView
+                    android:id="@+id/quiz_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Weekly Quiz"
+                    android:textSize="24sp"
+                    android:textColor="#004A74" />
 
-            <TextView
-                android:id="@+id/question_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Questions completed"
-                android:textSize="16sp"
-                android:layout_marginTop="4dp"
-                android:textColor="#7A8C99" />
+                <!-- New TextView with the instruction -->
+                <TextView
+                    android:id="@+id/instruction_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test what you have learnt with the sample quiz!"
+                    android:textSize="18sp"
+                    android:textColor="#004A74"
+                    android:layout_marginTop="8dp" />
 
-            <Button
-                android:id="@+id/start_button"
-                android:layout_width="200dp"
-                android:layout_height="50dp"
-                android:text="Start"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="#004A74"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
+                <!-- Start Button -->
+                <Button
+                    android:id="@+id/start_button"
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
+                    android:text="Start"
+                    android:layout_marginTop="16dp"
+                    android:backgroundTint="#004A74"
+                    android:textColor="#FFFFFF" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </RelativeLayout>
 
     <!-- Navigation Drawer -->

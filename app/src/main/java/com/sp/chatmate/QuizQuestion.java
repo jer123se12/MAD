@@ -7,6 +7,7 @@ public class QuizQuestion {
     private String option2;
     private String option3;
     private String correctAnswer;
+    private int wordId;  // Add word ID variable
 
     public QuizQuestion(String type, String question, String option1, String option2, String option3, String correctAnswer) {
         this.type = type;
@@ -15,6 +16,12 @@ public class QuizQuestion {
         this.option2 = option2;
         this.option3 = option3;
         this.correctAnswer = correctAnswer;
+        this.wordId = wordId;
+    }
+
+
+    public int getWordId() {
+        return wordId;
     }
 
     public String getType() {
