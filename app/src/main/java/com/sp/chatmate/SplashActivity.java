@@ -4,6 +4,7 @@ package com.sp.chatmate;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class SplashActivity extends AppCompatActivity {
         // Lottie Animation View
         LottieAnimationView animationView = findViewById(R.id.lottieAnimationView);
         SharedPreferences prefs=getSharedPreferences("USER", Context.MODE_PRIVATE);
+        MediaPlayer.create(this,R.raw.sound).start();
 
         // Delay for 3 seconds and move to MainActivity
         new Handler().postDelayed(() -> {

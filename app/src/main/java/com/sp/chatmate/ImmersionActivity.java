@@ -109,7 +109,7 @@ public class ImmersionActivity extends AppCompatActivity {
                 FirebaseDatabase.getInstance("https://langify-a017b-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("users"),
                 findViewById(R.id.immerse_layout),
                 findViewById(R.id.menu_icon),
-                menuItems.TODAYSFlASHCARD
+                menuItems.IMMERSION
         ).init();
 
         text=findViewById(R.id.ytquery);
@@ -162,7 +162,7 @@ public class ImmersionActivity extends AppCompatActivity {
                             int index=i;
                             Request request = new Request.Builder()
                                     .url(url2+v.id)
-                                    .header("x-api-key","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjEifQ.eyJpc3MiOiJuYWRsZXMiLCJpYXQiOiIxNzM5Mzg0MjcwIiwicHVycG9zZSI6ImFwaV9hdXRoZW50aWNhdGlvbiIsInN1YiI6IjVlZmU2ZGQ0NjIwMzRhOGI5MjYzMjEyYzZmNGEwYTEyIn0.WANoY-7nPkfWnA756eTk6Qm3TNIxQzmKSRaFQamRG-E")
+                                    .header("x-api-key","eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6IjEifQ.eyJpc3MiOiJuYWRsZXMiLCJpYXQiOiIxNzM5NDE0MzY2IiwicHVycG9zZSI6ImFwaV9hdXRoZW50aWNhdGlvbiIsInN1YiI6IjE1ZDFmYzM5ZGY2YzQ2NjQ4ZDNiNzk4ZWEwN2MzMWI0In0.St5aY7V9HUUfINTCcCpK0jcNAj8uGTmfdSl6B6TeSAM")
                                     .build();
                             client.newCall(request).enqueue(new Callback() {
                                 @Override
