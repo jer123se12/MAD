@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
+import java.util.Locale;
 //import com.squareup.picasso.Picasso;
 
 public class FlashCards extends AppCompatActivity {
@@ -43,6 +45,7 @@ public class FlashCards extends AppCompatActivity {
     Button easy;
     LinearLayout backLL;
     int currentCard=0;
+    TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,17 @@ public class FlashCards extends AppCompatActivity {
                 findViewById(R.id.menu_icon),
                 menuItems.TODAYSFlASHCARD
         ).init();
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i) {
 
+                // if No error is found then only it will run
+                if(i!=TextToSpeech.ERROR){
+                    // To Choose language of speech
+                    tts.setLanguage(Locale.JAPANESE);
+                }
+            }
+        });
         helper=new vocabHelper(this, "japanese");
         Bundle bundle=getIntent().getExtras();
 
@@ -68,6 +81,7 @@ public class FlashCards extends AppCompatActivity {
         flip=findViewById(R.id.flip_btn);
         hard=findViewById(R.id.hard_btn);
         easy=findViewById(R.id.easy_btn);
+        Button sound=findViewById(R.id.psound);
         backLL=findViewById(R.id.backLL);
         frontTerm=findViewById(R.id.front_term);
         backTerm=findViewById(R.id.back_term);
@@ -93,6 +107,13 @@ public class FlashCards extends AppCompatActivity {
                 }
             }
         });
+        sound.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tts.speak(cards.get(currentCard).term,TextToSpeech.QUEUE_FLUSH,null);
+            }
+        });
+
         hard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

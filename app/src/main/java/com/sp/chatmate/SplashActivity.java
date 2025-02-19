@@ -26,7 +26,6 @@ public class SplashActivity extends AppCompatActivity {
         // Delay for 3 seconds and move to MainActivity
         new Handler().postDelayed(() -> {
             if(prefs.getString("firstTime",null)==null){
-                prefs.edit().putString("firstTime","yes").apply();
             startActivity(new Intent(SplashActivity.this, onboarding.class));
             finish();
             }else{

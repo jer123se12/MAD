@@ -56,7 +56,7 @@ public class createFolder extends AppCompatActivity {
             public void onClick(View v) {
                 String folderName=name.getText().toString();
                 if(!folderName.matches("[A-Za-z0-9]+")||folderName.length()==0){
-                    Toast.makeText(createFolder.this, "Name must not be empty and can only contain alphanumeric charaters",Toast.LENGTH_LONG);
+                    Toast.makeText(createFolder.this, "Name must not be empty and can only contain alphanumeric charaters",Toast.LENGTH_LONG).show();
                     return;
                 }
                 List<Card> cardl=adapter.getFolderCards();

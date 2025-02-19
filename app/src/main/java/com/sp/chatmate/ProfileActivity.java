@@ -1,7 +1,10 @@
 package com.sp.chatmate;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -54,7 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
     String password;
     String about ;
     String hobbies ;
-
+    SharedPreferences prefs;
 
 
 
@@ -77,6 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile); // Load profile.xml
 
+         prefs=getSharedPreferences("USER", Context.MODE_PRIVATE);
         // Initialize Firebase
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
@@ -115,10 +119,25 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     int pid=123;
+    int cid=321;
     // Opens the Image Picker
     private void openImagePicker() {
+        if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.CAMERA}, cid);
+        }
         Intent camera_intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(camera_intent,pid);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == cid) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "camera permission granted", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Override
@@ -228,6 +247,7 @@ public class ProfileActivity extends AppCompatActivity {
                                           @Override
                                           public void onSuccess(Void unused) {
                                               progressDialog.dismiss();
+                                              prefs.edit().putString("firstTime","yes").apply();
                                               startActivity(new Intent(ProfileActivity.this, FlashCards.class));
                                               finish();
                                           }
